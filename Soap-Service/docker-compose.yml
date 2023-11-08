@@ -1,8 +1,73 @@
-version: '3.3'
+#version: '3.3'
+#services:
+#  mysql:
+#    image: mysql:latest
+#    env_file: .env
+#    ports:
+#    - '3306:3306'
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    volumes:
+#    - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+#  soap:
+#    ports:
+#      - '1233:1233'
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    environment: # Pass environment variables to the service
+#      - DATABASE_USER=root
+#      - DATABASE_PASSWORD=root
+#      - DATABASE_URL=jdbc:mysql://mysql:3306/forpin_soap
+#    depends_on:
+#      - mysql
+#  phpmyadmin:
+#    image: phpmyadmin:latest
+#    restart: always
+#    ports:
+#      - "8090:80"
+#    environment:
+#      - PMA_ARBITRARY=1
+
+
+version: "3.8"
+
 services:
-  soap:
+  mysqldb:
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_TCP_PORT=3306
+    expose:
+      - 3306
     ports:
-      - '1234:1234'
+      - '3306:3306'
+    volumes:
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:3306" ]
+      interval: 10s
+      timeout: 120s
+      retries: 11
+  soap:
+    depends_on:
+      mysqldb:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile
+    restart: on-failure
+    env_file: .env
+    ports:
+      - '1233:1233'
+    stdin_open: true
+    tty: true
+  phpmyadmin:
+      image: phpmyadmin:latest
+      restart: always
+      ports:
+        - "8090:80"
+      environment:
+        - PMA_ARBITRARY=1
