@@ -1,5 +1,7 @@
 package core;
 
+import com.sun.net.httpserver.HttpPrincipal;
+
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.spi.http.HttpExchange;
@@ -42,13 +44,15 @@ public class Database {
         try  {
             MessageContext msgContext =  wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) msgContext.get("com.sun.xml.ws.http.exchange");
-//            String APIKey = exchange.getRequestHeaders().
+//            String APIKey = exchange.getRequestHeaders().get();
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
         return status;
     }
+
     public void insertLog(String description, String IP, String endpoint) {
         try (Connection connection = this.getConnection()) {
             String query = "INSERT INTO LOG (description, IP, endpoint) VALUES (" + description + ", " + IP + ", " + endpoint + ")";
@@ -56,5 +60,13 @@ public class Database {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void log(WebServiceContext wsContext, String description) {
+        MessageContext msgContext = wsContext.getMessageContext();
+        HttpExchange httpExchange = (HttpExchange) msgContext.get("com.sun.xml.ws.http.exchange");
+        String ip = httpExchange.getRemoteAddress().getAddress().getHostAddress();
+        String endpoint = httpExchange.getRequestURI().toString();
+        insertLog(description, ip, endpoint);
     }
 }
