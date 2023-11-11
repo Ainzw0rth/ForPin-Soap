@@ -20,45 +20,17 @@ public class Database {
         }
     }
 
-    public void close() {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public Connection getConnection() {
         return this.connection;
     }
 
-    public void query(String sql) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.executeUpdate();
-        statement.close();
+    public int executeUpdate(String query) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(query);
+        return statement.executeUpdate();
     }
 
-    public void bind(String sql, Object... params) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
-        }
-
-        statement.executeUpdate();
-        statement.close();
-    }
-
-    public ResultSet executeQuery(String sql) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-        return statement.executeQuery();
-    }
-
-    public ResultSet single(String sql) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setMaxRows(1);
+    public ResultSet executeQuery(String query) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(query);
         return statement.executeQuery();
     }
 }

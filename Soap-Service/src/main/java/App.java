@@ -1,6 +1,5 @@
 import jakarta.xml.ws.Endpoint;
 import model.TestModel;
-import service.User;
 
 public class App {
     private static final String URL = "http://0.0.0.0:1233/user";
