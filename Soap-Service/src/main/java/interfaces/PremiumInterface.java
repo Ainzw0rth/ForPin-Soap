@@ -1,8 +1,8 @@
 package interfaces;
 
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.WebMethod;
 
 @WebService
 public interface PremiumInterface {
