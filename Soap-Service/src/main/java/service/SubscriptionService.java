@@ -22,7 +22,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
             try {
                 int result = this.executeUpdate(query);
                 if (result != 0) {
-                    this.log(wsContext, "New subcription");
+                    this.log(wsContext, "Added new subscription");
                     return true;
                 }
                 return false;
@@ -47,10 +47,11 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
                     log(wsContext, "Check subscription status");
                     return status;
                 }
+                return "";
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(e);
-                return status;`
+                return status;
             }
         } else {
             return status;
@@ -63,7 +64,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
-                    log(wsContext, "Mengupdate status subscription");
+                    log(wsContext, "Updated subscription status");
 //                    callback
                     return true;
                 }
