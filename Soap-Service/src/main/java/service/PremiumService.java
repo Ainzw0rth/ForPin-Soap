@@ -64,7 +64,7 @@ public class PremiumService extends Database implements PremiumInterface {
     public String checkPremiumUser(@WebParam(name = "creator_id") int creator_id) {
         String status = "";
         if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM subscription WHERE creator_id = " + creator_id;
+            String query = "SELECT * FROM premium WHERE creator_id = " + creator_id;
             try {
                 ResultSet result = this.executeQuery(query);
                 if (result.next()) {
