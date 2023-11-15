@@ -10,7 +10,10 @@ public class App {
     public static void main(String[] args) {
         try {
             System.out.println("Service is published at: http://localhost:1233/subscription");
-            System.out.println("Service is published at: http://localhost:1233/");
+            System.out.println("Service is published at: http://localhost:1233/premium");
+            SubscriptionService subscriptionService = new SubscriptionService();
+            String message = subscriptionService.subscriptionList();
+            System.out.println(message);
             Endpoint.publish(URL_subscription, new SubscriptionService());
             Endpoint.publish(URL_premium, new PremiumService());
         } catch (Exception e) {

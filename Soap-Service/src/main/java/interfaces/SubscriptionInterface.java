@@ -7,6 +7,8 @@ import javax.jws.WebMethod;
 @WebService
 public interface SubscriptionInterface {
     @WebMethod
+    public String subscriptionList();
+    @WebMethod
     public boolean newSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id);
     @WebMethod
     public String checkSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id);

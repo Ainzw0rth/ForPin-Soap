@@ -14,6 +14,36 @@ import java.sql.ResultSet;
 public class SubscriptionService extends Database implements SubscriptionInterface {
     @Resource
     WebServiceContext wsContext;
+    @WebMethod
+    public String subscriptionList() {
+        if (verifyAPIKey(wsContext)) {
+            String query = "SELECT * FROM subscription";
+            try {
+//                ResultSet set = this.executeQuery(query);
+//                const data =
+//                if (data = null) {
+//                    return "[]";
+//                } else if (data.size() > 0) {
+//
+//                }
+                String message =
+                        "[\n" +
+                        "    {\n" +
+                        "      \"subscriber_id\": 123,\n" +
+                        "      \"creator_id\": 456,\n" +
+                        "      \"status\": \"PENDING\"\n" +
+                        "    }\n" +
+                        "  ]";
+                return message;
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 
     @WebMethod
     public boolean newSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id) {
@@ -65,7 +95,6 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
                 int res = this.executeUpdate(query);
                 if (res != 0) {
                     log(wsContext, "Updated subscription status");
-//                    callback
                     return true;
                 }
                 return false;

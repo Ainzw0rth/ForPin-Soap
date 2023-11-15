@@ -17,4 +17,6 @@ CREATE TABLE IF NOT EXISTS subscription (
 CREATE TABLE IF NOT EXISTS premium (
     creator_id INT NOT NULL,
     status SET('accepted', 'rejected', 'pending')
-)
+);
+
+INSERT INTO subscription (creator_id, subscriber_id, status) VALUES (1, 2, 'PENDING');

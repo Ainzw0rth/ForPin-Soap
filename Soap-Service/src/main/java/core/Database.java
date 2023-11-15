@@ -1,17 +1,25 @@
 package core;
 
-import com.sun.net.httpserver.HttpPrincipal;
-
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.spi.http.HttpExchange;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Database {
     protected Connection connection;
     private String MYSQL_USERNAME = System.getenv("MYSQL_USER");
+//    private String MYSQL_USERNAME = "root";
+
     private String MYSQL_PASSWORD = System.getenv("MYSQL_ROOT_PASSWORD");
+//    private String MYSQL_PASSWORD = "piglet123";
     private String MYSQL_URL = "jdbc:mysql://mysqldb:3306/forpin-soap";
+//    private String MYSQL_URL = "jdbc:mysql://localhost:3306/forpin_soap";
+
     public Database() {
         try {
             System.out.println(MYSQL_URL);
@@ -44,8 +52,13 @@ public class Database {
         try  {
             MessageContext msgContext =  wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) msgContext.get("com.sun.xml.ws.http.exchange");
-//            String APIKey = exchange.getRequestHeaders().get();
-
+            String APIKey = exchange.getRequestHeaders().getFirst("Authorization");
+            String RESTKey = System.getenv("SOAP_REST");
+            String appKey = System.getenv("SOAP_PHP");
+            if (APIKey.equals(RESTKey) || APIKey.equals(appKey)) {
+                status = true;
+                System.out.println("success");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
@@ -68,5 +81,29 @@ public class Database {
         String ip = httpExchange.getRemoteAddress().getAddress().getHostAddress();
         String endpoint = httpExchange.getRequestURI().toString();
         insertLog(description, ip, endpoint);
+    }
+
+    public List<Map<String, Object>> getResFormat(ResultSet result) throws SQLException {
+        List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+        if (result != null) {
+            if (!result.next()) {
+                return null;
+            } else {
+                System.out.println(result);
+                ResultSetMetaData meta = result.getMetaData();
+                System.out.println(meta);
+                int columns = meta.getColumnCount();
+                while (result.next()) {
+                    Map<String, Object> row = new HashMap<String, Object>();
+                    for (int i = 1; i <= columns; ++i) {
+                        String columnName = meta.getColumnName(i);
+                        Object val = result.getObject(i);
+                        row.put(columnName, val);
+                    }
+                    dataList.add(row);
+                }
+            }
+        }
+        return dataList;
     }
 }
