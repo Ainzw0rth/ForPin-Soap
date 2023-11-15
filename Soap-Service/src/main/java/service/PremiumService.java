@@ -1,5 +1,6 @@
 package service;
 
+import com.google.gson.Gson;
 import core.Database;
 import interfaces.PremiumInterface;
 
@@ -9,12 +10,36 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 
 @WebService(endpointInterface = "interfaces.PremiumInterface")
 public class PremiumService extends Database implements PremiumInterface {
     @Resource
     WebServiceContext wsContext;
 
+    @WebMethod
+    public String premiumList() {
+        if (verifyAPIKey(wsContext)) {
+            String query = "SELECT * FROM premium WHERE status = 'PENDING'";
+            try {
+                ResultSet result = this.executeQuery(query);
+                List<Map<String, Object>> data = getResFormat(result);
+                if (data == null) {
+                    return "[]";
+                } else if (data.size() > 0) {
+                    log(wsContext, "Fetched premium users data");
+                    return new Gson().toJson(data);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
     @WebMethod
     public boolean newPremiumUser(@WebParam(name = "creator_id") int creator_id) {
         if (verifyAPIKey(wsContext)) {

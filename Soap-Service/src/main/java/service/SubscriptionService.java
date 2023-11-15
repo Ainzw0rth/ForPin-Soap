@@ -2,13 +2,15 @@ package service;
 
 import core.Database;
 import interfaces.SubscriptionInterface;
-
+import com.google.gson.Gson;
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 
 @WebService(endpointInterface = "interfaces.SubscriptionInterface")
 public class SubscriptionService extends Database implements SubscriptionInterface {
@@ -17,24 +19,16 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
     @WebMethod
     public String subscriptionList() {
         if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM subscription";
+            String query = "SELECT * FROM subscription WHERE status = 'PENDING'";
             try {
-//                ResultSet set = this.executeQuery(query);
-//                const data =
-//                if (data = null) {
-//                    return "[]";
-//                } else if (data.size() > 0) {
-//
-//                }
-                String message =
-                        "[\n" +
-                        "    {\n" +
-                        "      \"subscriber_id\": 123,\n" +
-                        "      \"creator_id\": 456,\n" +
-                        "      \"status\": \"PENDING\"\n" +
-                        "    }\n" +
-                        "  ]";
-                return message;
+                ResultSet result = this.executeQuery(query);
+                List<Map<String, Object>> data = getResFormat(result);
+                if (data == null) {
+                    return "[]";
+                } else if (data.size() > 0) {
+                    log(wsContext, "Fetched subscription data");
+                    return new Gson().toJson(data);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(e);
