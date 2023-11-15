@@ -11,12 +11,12 @@ CREATE TABLE IF NOT EXISTS log (
 CREATE TABLE IF NOT EXISTS subscription (
     creator_id INT NOT NULL,
     subscriber_id INT NOT NULL,
-    status SET('accepted', 'rejected', 'pending')
+    status SET('ACCEPTED', 'REJECTED', 'PENDING')
 );
 
 CREATE TABLE IF NOT EXISTS premium (
     creator_id INT NOT NULL,
-    status SET('accepted', 'rejected', 'pending')
+    status SET('ACCEPTED', 'REJECTED', 'PENDING')
 );
-
+INSERT INTO premium (creator_id, status) VALUES (1, 'PENDING');
 INSERT INTO subscription (creator_id, subscriber_id, status) VALUES (1, 2, 'PENDING');

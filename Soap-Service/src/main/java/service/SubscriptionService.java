@@ -37,6 +37,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         } else {
             return null;
         }
+        return null;
     }
 
     @WebMethod
@@ -84,7 +85,8 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
     @WebMethod
     public boolean updateSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id, @WebParam(name = "status") String status) {
         if (verifyAPIKey(wsContext)) {
-            String query = "UPDATE subscription SET status ='" + status + "' WHERE creator_id = " + creator_id + "AND subscriber_id = " + subscriber_id;
+            String query = "UPDATE subscription SET status ='" + status + "' WHERE creator_id = " + creator_id + " AND subscriber_id = " + subscriber_id;
+            System.out.println(query);
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {

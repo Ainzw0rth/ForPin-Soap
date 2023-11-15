@@ -68,7 +68,9 @@ public class Database {
 
     public void insertLog(String description, String IP, String endpoint) {
         try (Connection connection = this.getConnection()) {
-            String query = "INSERT INTO LOG (description, IP, endpoint) VALUES (" + description + ", " + IP + ", " + endpoint + ")";
+            String query = "INSERT INTO log (description, IP, endpoint) VALUES ('" + description + "', '" + IP + "', '" + endpoint + "')";
+            System.out.println("QUERY");
+            System.out.println(query);
             this.executeUpdate(query);
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,11 +91,9 @@ public class Database {
             if (!result.next()) {
                 return null;
             } else {
-                System.out.println(result);
                 ResultSetMetaData meta = result.getMetaData();
-                System.out.println(meta);
                 int columns = meta.getColumnCount();
-                while (result.next()) {
+                 do {
                     Map<String, Object> row = new HashMap<String, Object>();
                     for (int i = 1; i <= columns; ++i) {
                         String columnName = meta.getColumnName(i);
@@ -101,7 +101,7 @@ public class Database {
                         row.put(columnName, val);
                     }
                     dataList.add(row);
-                }
+                } while (result.next());
             }
         }
         return dataList;

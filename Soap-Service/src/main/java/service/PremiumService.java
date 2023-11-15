@@ -19,28 +19,6 @@ public class PremiumService extends Database implements PremiumInterface {
     WebServiceContext wsContext;
 
     @WebMethod
-    public String premiumList() {
-        if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM premium WHERE status = 'PENDING'";
-            try {
-                ResultSet result = this.executeQuery(query);
-                List<Map<String, Object>> data = getResFormat(result);
-                if (data == null) {
-                    return "[]";
-                } else if (data.size() > 0) {
-                    log(wsContext, "Fetched premium users data");
-                    return new Gson().toJson(data);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(e);
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-    @WebMethod
     public boolean newPremiumUser(@WebParam(name = "creator_id") int creator_id) {
         if (verifyAPIKey(wsContext)) {
             String query = "INSERT INTO premium (creator_id, status) VALUES (" + creator_id + ", 'PENDING')";
@@ -59,6 +37,36 @@ public class PremiumService extends Database implements PremiumInterface {
         } else {
             return false;
         }
+    }
+    @WebMethod
+    public String premiumList() {
+        if (verifyAPIKey(wsContext)) {
+            System.out.println("here");
+            String query = "SELECT * FROM premium WHERE status = 'PENDING'";
+            try {
+                ResultSet result = this.executeQuery(query);
+                System.out.println("here");
+                List<Map<String, Object>> data = getResFormat(result);
+                if (data == null) {
+                    System.out.println("here2");
+                    return "[]";
+                }
+                System.out.println(result);
+                System.out.println(data);
+                if (data.size() > 0) {
+                    System.out.println("here3");
+                    log(wsContext, "Fetched premium users data");
+                    return new Gson().toJson(data);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+        return null;
     }
     @WebMethod
     public String checkPremiumUser(@WebParam(name = "creator_id") int creator_id) {
@@ -85,10 +93,15 @@ public class PremiumService extends Database implements PremiumInterface {
     @WebMethod
     public boolean updatePremiumUser(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "status") String status) {
         if (verifyAPIKey(wsContext)) {
+            System.out.println("CREATOR ID");
+            System.out.println(creator_id);
+            System.out.println("STATUS");
+            System.out.println(status);
             String query = "UPDATE premium SET status ='" + status + "' WHERE creator_id = " + creator_id;
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
+                    System.out.println("here in updating");
                     log(wsContext, "Updated premium status");
 //                    callback
                     return true;
