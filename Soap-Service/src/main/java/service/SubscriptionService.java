@@ -8,6 +8,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,9 +27,33 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         try {
             String phpURL = System.getenv("PHP_URL_SUBSCRIPTION");
             URL url = new URL(phpURL);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setDoOutput(true);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            String json = "{\"creator_id\": " + creator_id + ", \"subscriber_id\": " + subscriber_id + ", \"status\": \"" + status + "\"}";
+            System.out.println(json);
+
+            try(OutputStream os = connection.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return false;
+            }
+
+            try(BufferedReader br = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                System.out.println(response.toString());
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
