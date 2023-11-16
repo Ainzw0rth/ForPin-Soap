@@ -9,7 +9,15 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +26,46 @@ public class PremiumService extends Database implements PremiumInterface {
     @Resource
     WebServiceContext wsContext;
 
+    private boolean callbackToPHP(String creator_id, String status)  {
+        try {
+            String phpURL = System.getenv("PHP_URL_PREMIUM");
+            URL url = new URL(phpURL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            String json = "{\"creator_id\": " + creator_id + ", \"status\": \"" + status + "\"}";
+            System.out.println(json);
+
+            try(OutputStream os = connection.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return false;
+            }
+
+            try(BufferedReader br = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                System.out.println(response.toString());
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            log(wsContext, "Failed to callback to php");
+            return false;
+        }
+    }
+
     @WebMethod
     public boolean newPremiumUser(@WebParam(name = "creator_id") int creator_id) {
         if (verifyAPIKey(wsContext)) {
@@ -25,7 +73,7 @@ public class PremiumService extends Database implements PremiumInterface {
             try {
                 int result = this.executeUpdate(query);
                 if (result != 0) {
-                    this.log(wsContext, "New premium user");
+                    log(wsContext, "New premium user");
                     return true;
                 }
                 return false;
@@ -101,9 +149,9 @@ public class PremiumService extends Database implements PremiumInterface {
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
-                    System.out.println("here in updating");
-                    log(wsContext, "Updated premium status");
-//                    callback
+                    if (callbackToPHP(String.valueOf(creator_id), status)) {
+                        log(wsContext, "Updated premium status");
+                    }
                     return true;
                 }
                 return false;
@@ -116,4 +164,6 @@ public class PremiumService extends Database implements PremiumInterface {
             return false;
         }
     }
+    
+
 }

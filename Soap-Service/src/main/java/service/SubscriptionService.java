@@ -8,6 +8,10 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,22 @@ import java.util.Map;
 public class SubscriptionService extends Database implements SubscriptionInterface {
     @Resource
     WebServiceContext wsContext;
+
+    private boolean callbackToPHP(String creator_id, String subscriber_id, String status)  {
+        try {
+            String phpURL = System.getenv("PHP_URL_SUBSCRIPTION");
+            URL url = new URL(phpURL);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            log(wsContext, "Failed to callback to php");
+            return false;
+        }
+    }
     @WebMethod
     public String subscriptionList() {
         if (verifyAPIKey(wsContext)) {
@@ -90,6 +110,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
+                    callbackToPHP(String.valueOf(creator_id), String.valueOf(subscriber_id), status);
                     log(wsContext, "Updated subscription status");
                     return true;
                 }
