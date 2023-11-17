@@ -6,7 +6,7 @@
 Forpin-SOAP berfungsi sebagai _backend_ untuk keseluruhan aplikasi forpin, menggunakan protokol SOAP. Aplikasi ini dikembangkan dengan menggunakan java dan _library_ JAX WS dan disusun untuk memenuhi Milestone 2 dari mata kuliath IF3110 Pengembangan Aplikasi Berbasis Web. 
 
 ## Skema Basis Data 
-![image](https://github.com/Ainzw0rth/ForPin-Soap/assets/88926116/c78ce686-0060-4960-abb7-7f74ffb15107)
+![image](https://github.com/Ainzw0rth/ForPin-Soap/assets/88926116/d5fd2e2c-ad2f-446a-b04e-436f6187beab)
 
 ## Endpoint API 
 Endpoint berada pada /subscription dan /premium 
