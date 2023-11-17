@@ -11,9 +11,9 @@ public interface PremiumInterface {
     @WebMethod
     public String premiumList();
     @WebMethod
-    public boolean newPremiumUser(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id);
+    public boolean newPremiumUser(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username);
     @WebMethod
-    public String checkPremiumUser(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id);
+    public String checkPremiumUser(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username);
     @WebMethod
-    public boolean updatePremiumUser(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "status", targetNamespace = "http://interfaces/") String status);
+    public boolean updatePremiumUser(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username, @WebParam(name = "status", targetNamespace = "http://interfaces/") String status);
 }
