@@ -89,7 +89,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
     @WebMethod
     public boolean newSubscription(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "subscriber_username") String subscriber_username) {
         if (verifyAPIKey(wsContext)) {
-            String query = "INSERT INTO subscription (creator_username, subscriber_username, status) VALUES ('" + creator_username + "', " + subscriber_username + ", 'PENDING')";
+            String query = "INSERT INTO subscription (creator_username, subscriber_username, status) VALUES ('" + creator_username + "', '" + subscriber_username + "', 'PENDING')";
             try {
                 int result = this.executeUpdate(query);
                 if (result != 0) {
