@@ -11,6 +11,8 @@ public interface SubscriptionInterface {
     @WebMethod
     public String subscriptionList();
     @WebMethod
+    public String notYetSubscribedUserList(@WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
+    @WebMethod
     public boolean newSubscription(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
     @WebMethod
     public String checkSubscription(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
