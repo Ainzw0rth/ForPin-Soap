@@ -27,6 +27,7 @@ Beberapa method yang terdapat pada endpoint /premium
 ## Pembagian Tugas
 1. Initial Project Setup : 13521156
 2. Security (Log and API Key) : 13521156
-3. Subscription and Premium service : 13521156
-4. Sync to PHP : 13521156
-5. PHP to SOAP : 13521156
+3. notYetSubscribedList : 13521069
+4. Subscription and Premium service : 13521156
+5. Sync to PHP : 13521156
+6. PHP to SOAP : 13521156
