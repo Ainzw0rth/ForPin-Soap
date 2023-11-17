@@ -23,7 +23,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
     @Resource
     WebServiceContext wsContext;
 
-    private boolean callbackToPHP(String creator_id, String subscriber_id, String status)  {
+    private boolean callbackToPHP(String creator_username, String subscriber_username, String status)  {
         try {
             String phpURL = System.getenv("PHP_URL_SUBSCRIPTION");
             URL url = new URL(phpURL);
@@ -33,7 +33,7 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
 
-            String json = "{\"creator_id\": " + creator_id + ", \"subscriber_id\": " + subscriber_id + ", \"status\": \"" + status + "\"}";
+            String json = "{\"creator_username\": \"" + creator_username + "\", \"subscriber_username\": \"" + subscriber_username + "\", \"status\": \"" + status + "\"}";
             System.out.println(json);
 
             try(OutputStream os = connection.getOutputStream()) {
@@ -86,9 +86,9 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         return null;
     }
     @WebMethod
-    public String notYetSubscribedUserList(@WebParam(name = "subscriber_id") int subscriber_id) {
+    public String notYetSubscribedUserList(@WebParam(name = "subscriber_id") String subscriber_username) {
         if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM subscription WHERE status = 'REJECTED' AND subscriber_id = " + subscriber_id;
+            String query = "SELECT * FROM subscription WHERE status = 'REJECTED' AND subscriber_username = " + subscriber_username;
             try {
                 ResultSet result = this.executeQuery(query);
                 List<Map<String, Object>> data = getResFormat(result);
@@ -109,9 +109,9 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         return null;
     }
     @WebMethod
-    public boolean newSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id) {
+    public boolean newSubscription(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "subscriber_username") String subscriber_username) {
         if (verifyAPIKey(wsContext)) {
-            String query = "INSERT INTO subscription (creator_id, subscriber_id, status) VALUES (" + creator_id + ", " + subscriber_id + ", 'PENDING')";
+            String query = "INSERT INTO subscription (creator_username, subscriber_username, status) VALUES ('" + creator_username + "', " + subscriber_username + ", 'PENDING')";
             try {
                 int result = this.executeUpdate(query);
                 if (result != 0) {
@@ -129,10 +129,10 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         }
     }
     @WebMethod
-    public String checkSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id) {
+    public String checkSubscription(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "subscriber_username") String subscriber_username) {
         String status = "";
         if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM subscription WHERE creator_id = " + creator_id + " AND subscriber_id = " + subscriber_id;
+            String query = "SELECT * FROM subscription WHERE creator_username = '" + creator_username + "' AND subscriber_username = '" + subscriber_username + "'";
             try {
                 ResultSet result = this.executeQuery(query);
                 if (result.next()) {
@@ -151,14 +151,14 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         }
     }
     @WebMethod
-    public boolean updateSubscription(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "subscriber_id") int subscriber_id, @WebParam(name = "status") String status) {
+    public boolean updateSubscription(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "subscriber_username") String subscriber_username, @WebParam(name = "status") String status) {
         if (verifyAPIKey(wsContext)) {
-            String query = "UPDATE subscription SET status ='" + status + "' WHERE creator_id = " + creator_id + " AND subscriber_id = " + subscriber_id;
+            String query = "UPDATE subscription SET status ='" + status + "' WHERE creator_username = '" + creator_username + "' AND subscriber_username = '" + subscriber_username + "'";
             System.out.println(query);
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
-                    callbackToPHP(String.valueOf(creator_id), String.valueOf(subscriber_id), status);
+                    callbackToPHP(String.valueOf(creator_username), String.valueOf(subscriber_username), status);
                     log(wsContext, "Updated subscription status");
                     return true;
                 }

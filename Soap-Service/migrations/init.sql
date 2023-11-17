@@ -9,17 +9,17 @@ CREATE TABLE IF NOT EXISTS log (
 );
 
 CREATE TABLE IF NOT EXISTS subscription (
-    creator_id INT NOT NULL,
-    subscriber_id INT NOT NULL,
+    creator_username VARCHAR(50) NOT NULL,
+    subscriber_username VARCHAR(50) NOT NULL,
     status SET('ACCEPTED', 'REJECTED', 'PENDING') DEFAULT 'PENDING'
 );
 
 CREATE TABLE IF NOT EXISTS premium (
-    creator_id INT NOT NULL,
+    creator_username VARCHAR(50) NOT NULL,
     status SET('ACCEPTED', 'REJECTED', 'PENDING') DEFAULT 'PENDING'
 );
-INSERT INTO premium (creator_id, status) VALUES (1, 'PENDING');
-INSERT INTO premium (creator_id, status) VALUES (2, 'PENDING');
-INSERT INTO premium (creator_id, status) VALUES (3, 'PENDING');
-INSERT INTO premium (creator_id, status) VALUES (4, 'PENDING');
-INSERT INTO subscription (creator_id, subscriber_id, status) VALUES (1, 2, 'PENDING');
+-- INSERT INTO premium (creator_username, status) VALUES ('userone', 'PENDING');
+-- INSERT INTO premium (creator_username, status) VALUES ('usertwo', 'PENDING');
+-- INSERT INTO premium (creator_username, status) VALUES ('userthree', 'PENDING');
+-- INSERT INTO premium (creator_username, status) VALUES ('userfour', 'PENDING');
+-- INSERT INTO subscription (creator_username, subscriber_username, status) VALUES ('userone', 'usertwo', 'PENDING');

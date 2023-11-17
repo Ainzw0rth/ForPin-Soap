@@ -11,12 +11,12 @@ public interface SubscriptionInterface {
     @WebMethod
     public String subscriptionList();
     @WebMethod
-    public String notYetSubscribedUserList(@WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
+    public String notYetSubscribedUserList(@WebParam(name = "subscriber_username", targetNamespace = "http://interfaces/") String subscriber_username);
     @WebMethod
-    public boolean newSubscription(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
+    public boolean newSubscription(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username, @WebParam(name = "subscriber_username", targetNamespace = "http://interfaces/") String subscriber_username);
     @WebMethod
-    public String checkSubscription(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id);
+    public String checkSubscription(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username, @WebParam(name = "subscriber_username", targetNamespace = "http://interfaces/") String subscriber_username);
     @WebMethod
-    public boolean updateSubscription(@WebParam(name = "creator_id", targetNamespace = "http://interfaces/") int creator_id, @WebParam(name = "subscriber_id", targetNamespace = "http://interfaces/") int subscriber_id, @WebParam(name = "status", targetNamespace = "http://interfaces/") String status);
+    public boolean updateSubscription(@WebParam(name = "creator_username", targetNamespace = "http://interfaces/") String creator_username, @WebParam(name = "subscriber_username", targetNamespace = "http://interfaces/") String subscriber_username, @WebParam(name = "status", targetNamespace = "http://interfaces/") String status);
 
 }

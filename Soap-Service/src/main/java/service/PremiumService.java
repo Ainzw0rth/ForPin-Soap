@@ -26,7 +26,7 @@ public class PremiumService extends Database implements PremiumInterface {
     @Resource
     WebServiceContext wsContext;
 
-    private boolean callbackToPHP(String creator_id, String status)  {
+    private boolean callbackToPHP(String creator_username, String status)  {
         try {
             String phpURL = System.getenv("PHP_URL_PREMIUM");
             URL url = new URL(phpURL);
@@ -36,7 +36,7 @@ public class PremiumService extends Database implements PremiumInterface {
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
 
-            String json = "{\"creator_id\": " + creator_id + ", \"status\": \"" + status + "\"}";
+            String json = "{\"creator_username\": \"" + creator_username + "\", \"status\": \"" + status + "\"}";
             System.out.println(json);
 
             try(OutputStream os = connection.getOutputStream()) {
@@ -67,9 +67,9 @@ public class PremiumService extends Database implements PremiumInterface {
     }
 
     @WebMethod
-    public boolean newPremiumUser(@WebParam(name = "creator_id") int creator_id) {
+    public boolean newPremiumUser(@WebParam(name = "creator_username") String creator_username) {
         if (verifyAPIKey(wsContext)) {
-            String query = "INSERT INTO premium (creator_id, status) VALUES (" + creator_id + ", 'PENDING')";
+            String query = "INSERT INTO premium (creator_username, status) VALUES ('" + creator_username + "', 'PENDING')";
             try {
                 int result = this.executeUpdate(query);
                 if (result != 0) {
@@ -113,10 +113,10 @@ public class PremiumService extends Database implements PremiumInterface {
         return null;
     }
     @WebMethod
-    public String checkPremiumUser(@WebParam(name = "creator_id") int creator_id) {
+    public String checkPremiumUser(@WebParam(name = "creator_username") String creator_username) {
         String status = "";
         if (verifyAPIKey(wsContext)) {
-            String query = "SELECT * FROM premium WHERE creator_id = " + creator_id;
+            String query = "SELECT * FROM premium WHERE creator_username = '" + creator_username + "'";
             try {
                 ResultSet result = this.executeQuery(query);
                 if (result.next()) {
@@ -135,17 +135,17 @@ public class PremiumService extends Database implements PremiumInterface {
         }
     }
     @WebMethod
-    public boolean updatePremiumUser(@WebParam(name = "creator_id") int creator_id, @WebParam(name = "status") String status) {
+    public boolean updatePremiumUser(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "status") String status) {
         if (verifyAPIKey(wsContext)) {
             System.out.println("CREATOR ID");
-            System.out.println(creator_id);
+            System.out.println(creator_username);
             System.out.println("STATUS");
             System.out.println(status);
-            String query = "UPDATE premium SET status ='" + status + "' WHERE creator_id = " + creator_id;
+            String query = "UPDATE premium SET status ='" + status + "' WHERE creator_username = '" + creator_username + "'";
             try {
                 int res = this.executeUpdate(query);
                 if (res != 0) {
-                    if (callbackToPHP(String.valueOf(creator_id), status)) {
+                    if (callbackToPHP(String.valueOf(creator_username), status)) {
                         log(wsContext, "Updated premium status");
                     }
                     return true;
