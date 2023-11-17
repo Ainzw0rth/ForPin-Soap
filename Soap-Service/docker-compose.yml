@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_TCP_PORT=3306
+    expose:
+      - 3306
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:3306" ]
+      interval: 10s
+      timeout: 120s
+      retries: 11
+  soap:
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    env_file: .env
+    ports:
+      - '1233:1233'
+    stdin_open: true
+    tty: true
+  phpmyadmin:
+      image: phpmyadmin:latest
+      restart: always
+      ports:
+        - "8090:80"
+      environment:
+        - PMA_ARBITRARY=1
