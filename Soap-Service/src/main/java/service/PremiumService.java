@@ -89,20 +89,16 @@ public class PremiumService extends Database implements PremiumInterface {
     @WebMethod
     public String premiumList() {
         if (verifyAPIKey(wsContext)) {
-            System.out.println("here");
             String query = "SELECT * FROM premium WHERE status = 'PENDING'";
             try {
                 ResultSet result = this.executeQuery(query);
-                System.out.println("here");
                 List<Map<String, Object>> data = getResFormat(result);
                 if (data == null) {
-                    System.out.println("here2");
                     return "[]";
                 }
                 System.out.println(result);
                 System.out.println(data);
                 if (data.size() > 0) {
-                    System.out.println("here3");
                     log(wsContext, "Fetched premium users data");
                     return new Gson().toJson(data);
                 }

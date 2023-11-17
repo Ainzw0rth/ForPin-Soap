@@ -85,7 +85,29 @@ public class SubscriptionService extends Database implements SubscriptionInterfa
         }
         return null;
     }
-
+    @WebMethod
+    public String notYetSubscribedUserList(@WebParam(name = "subscriber_id") String subscriber_username) {
+        if (verifyAPIKey(wsContext)) {
+            String query = "SELECT * FROM subscription WHERE status = 'REJECTED' AND subscriber_username = " + subscriber_username;
+            try {
+                ResultSet result = this.executeQuery(query);
+                List<Map<String, Object>> data = getResFormat(result);
+                if (data == null) {
+                    return "[]";
+                } else if (data.size() > 0) {
+                    log(wsContext, "Fetched subscription data");
+                    return new Gson().toJson(data);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+        return null;
+    }
     @WebMethod
     public boolean newSubscription(@WebParam(name = "creator_username") String creator_username, @WebParam(name = "subscriber_username") String subscriber_username) {
         if (verifyAPIKey(wsContext)) {
